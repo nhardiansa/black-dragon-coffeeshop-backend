@@ -1,4 +1,3 @@
-// const querystring = require('querystring');
 const {
   deleteFile
 } = require('../helpers/fileHandler');
@@ -50,7 +49,7 @@ exports.showResponseWithPagination = (res, message, result, pagination, status =
 const getPagination = (pagination) => {
   console.log(pagination);
   const last = Math.ceil(pagination.total / pagination.limit);
-  const url = `${APP_URL}/${pagination.route}&page=`;
+  const url = `http://${APP_URL}/${pagination.route}&page=`;
   return {
     prev: pagination.page > 1 ? `${url}${pagination.page - 1}` : null,
     next: pagination.page < last ? `${url}${pagination.page + 1}` : null,
@@ -133,7 +132,7 @@ exports.pageInfoCreator = (totalDataCount, url, values) => {
 
 exports.dataMapping = (data) => {
   data.map(el => {
-    if (el.image !== null) {
+    if (el.image) {
       const path = el.image.replace(/\\/g, '/');
       if (ENVIRONMENT !== 'production') {
         el.image = `${APP_URL}/${path}`;
@@ -145,4 +144,47 @@ exports.dataMapping = (data) => {
   });
 
   return data;
+};
+
+exports.pageInfoCreator = (totalDataCount, path, values) => {
+  const {
+    page,
+    limit
+  } = values;
+
+  const keys = [];
+  let next = `${APP_URL}/${path}?`;
+  let prev = `${APP_URL}/${path}?`;
+
+  for (const key in values) {
+    keys.push(key);
+  }
+
+  keys.forEach((el, idx) => {
+    if (values[el]) {
+      if (el === 'page') {
+        next += el + '=' + (Number(values[el]) + 1) + '&';
+        prev += el + '=' + (Number(values[el]) - 1) + '&';
+      } else if (idx < (keys.length - 1)) {
+        next += el + '=' + values[el] + '&';
+        prev += el + '=' + values[el] + '&';
+      } else {
+        next += el + '=' + values[el];
+        prev += el + '=' + values[el];
+      }
+    }
+  });
+
+  const totalData = totalDataCount;
+
+  const totalPages = Math.ceil(totalData / limit) || 1;
+
+  return ({
+    totalData,
+    totalPages,
+    currentPage: page,
+    nextPage: page < totalPages ? next : null,
+    prevPage: page > 1 ? prev : null,
+    lastPages: totalPages
+  });
 };

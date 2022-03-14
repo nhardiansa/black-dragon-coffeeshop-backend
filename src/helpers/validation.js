@@ -1,110 +1,204 @@
-// const {
-// body,
-// validationResult
-// } = require('express-validator');
-// const categoryModel = require('../models/category');
+const {
+  body,
+  validationResult
+} = require('express-validator');
+const categoryModel = require('../models/category');
 const deliveryMethodModel = require('../models/deliveryMethod');
 const sizeModel = require('../models/size');
 const validator = require('validator');
 const productModel = require('../models/product');
-const userModel = require('../models/user');
 
-// exports.validationDataProducts = async (data) => {
-//   let result = null;
-//   if (data.name == null || data.name == '') {
-//     result = {
-//       name: 'Name must be filled'
-//     };
-//   }
-
-//   if (data.category_id == null || data.category_id == '') {
-//     result = { ...result, category_id: 'Id category must be filled.' }
-//   } else {
-//     const getDataCategory = await categoryModel.getDataCategory(data.category_id)
-//     if (getDataCategory.length == 0) {
-//       result = { category: 'Category not found.' }
-//     }
-//   }
-
-//   if (data.delivery_method_id == null || data.delivery_method_id == '') {
-//     result = { ...result, category_id: 'id delivery method must be filled.' }
-//   } else {
-//     const getDeliveryMethod = await deliveryMethodModel.getDataDeliveryMethod(data.delivery_method_id)
-//     if (getDeliveryMethod == 0) {
-//       result = { delivery_method_id: 'id delivery method not found.' }
-//     }
-//   }
-
-//   if (data.size_id == null || data.size_id == '') {
-//     result = { ...result, size_id: 'id size must be filled.' }
-//   } else {
-//     const getDataSize = await sizeModel.getDataSize(data.size_id)
-//     if (getDataSize == 0) {
-//       result = { size: 'id size not found.' }
-//     }
-//   }
-
-//   if (data.description == null || data.description == '') {
-//     result = { ...result, description: 'Description must be filled.' }
-//   }
-
-//   if (data.price == null || data.price == '') {
-//     result = { ...result, price: 'Price must be filled' }
-//   } else if (isNaN(parseInt(data.price))) {
-//     result = { ...result, price: 'Price must be a number.' }
-//   } else if (parseInt(data.price) == 0) {
-//     result = { ...result, price: 'Price must be must be greater than 0.' }
-//   }
-
-//   if (data.stocks == null || data.stocks == '') {
-//     result = { ...result, stocks: 'Stock must be filled' }
-//   } else if (isNaN(parseInt(data.stocks))) {
-//     result = { ...result, stocks: 'Stock must be a number.' }
-//   } else if (parseInt(data.stocks) == 0) {
-//     result = { ...result, stocks: 'Stock must be must be greater than 0.' }
-//   }
-
-//   if (data.delivery_time_start == null || data.delivery_time_start == '') {
-//     result = { ...result, delivery_time_start: 'Delivery time start must be filled' }
-//   }
-
-//   if (data.delivery_time_end == null || data.delivery_time_end == '') {
-//     result = { ...result, delivery_time_end: 'Delivery time end must be filled' }
-//   }
-
-//   return result
-// }
-
-exports.validationDataPromotionDeliveryMethods = async (data) => {
+exports.validationDataProducts = async (data) => {
   let result = null;
-  if (data.promotion_id === null || data.promotion_id === undefined) {
+  if (data.name == null || data.name == '') {
     result = {
-      promotion_id: 'promotion_id must be filled'
-    };
-  }
-  if (!data.promotion_id) {
-    result = {
-      promotion_id: 'Invalid input, promotion_id must be a number!'
+      name: 'Name must be filled'
     };
   }
 
-  if (data.delivery_method_id === null || data.delivery_method_id === undefined) {
+  console.log(data);
+
+  if (data.category_id == null || data.category_id == '') {
     result = {
-      delivery_method_id: 'promotion_id must be filled'
+      ...result,
+      category_id: 'Id category must be filled.'
+    };
+  } else {
+    const getDataCategory = await categoryModel.getDataCategory(data.category_id);
+    if (getDataCategory.length == 0) {
+      result = {
+        category: 'Category not found.'
+      };
+    }
+  }
+
+  // if (data.delivery_method_id == null || data.delivery_method_id == '') {
+  //   result = {
+  //     ...result,
+  //     category_id: 'id delivery method must be filled.'
+  //   };
+  // } else {
+  //   const getDeliveryMethod = await deliveryMethodModel.getDataDeliveryMethod(data.delivery_method_id);
+  //   if (getDeliveryMethod == 0) {
+  //     result = {
+  //       delivery_method_id: 'id delivery method not found.'
+  //     };
+  //   }
+  // }
+
+  // if (data.size_id == null || data.size_id == '') {
+  //   result = {
+  //     ...result,
+  //     size_id: 'id size must be filled.'
+  //   };
+  // } else {
+  //   const getDataSize = await sizeModel.getDataSize(data.size_id);
+  //   if (getDataSize == 0) {
+  //     result = {
+  //       size: 'id size not found.'
+  //     };
+  //   }
+  // }
+
+  if (data.description == null || data.description == '') {
+    result = {
+      ...result,
+      description: 'Description must be filled.'
     };
   }
-  if (!data.delivery_method_id) {
+
+  if (data.price == null || data.price == '') {
     result = {
-      delivery_method_id: 'Invalid input, promotion_id must be a number!'
+      ...result,
+      price: 'Price must be filled'
+    };
+  } else if (isNaN(parseInt(data.price))) {
+    result = {
+      ...result,
+      price: 'Price must be a number.'
+    };
+  } else if (parseInt(data.price) == 0) {
+    result = {
+      ...result,
+      price: 'Price must be must be greater than 0.'
+    };
+  }
+
+  if (data.stocks == null || data.stocks == '') {
+    result = {
+      ...result,
+      stocks: 'Stock must be filled'
+    };
+  } else if (isNaN(parseInt(data.stocks))) {
+    result = {
+      ...result,
+      stocks: 'Stock must be a number.'
+    };
+  } else if (parseInt(data.stocks) == 0) {
+    result = {
+      ...result,
+      stocks: 'Stock must be must be greater than 0.'
+    };
+  }
+
+  if (data.delivery_time_start == null || data.delivery_time_start == '') {
+    result = {
+      ...result,
+      delivery_time_start: 'Delivery time start must be filled'
+    };
+  }
+
+  if (data.delivery_time_end == null || data.delivery_time_end == '') {
+    result = {
+      ...result,
+      delivery_time_end: 'Delivery time end must be filled'
     };
   }
 
   return result;
 };
 
+exports.validationDataTax = async (data) => {
+  let result = null;
+  if (data.name === null || data.name === '') {
+    result = {
+      name: 'Name must be filled'
+    };
+  }
+  if (!data.value) {
+    result = {
+      value: 'Invalid input'
+    };
+  }
+  return result;
+};
+
+exports.validationDataPromotionDeliveryMethods = async (data) => {
+  let result = null;
+  if (validator.isEmpty(data.promotion_id)) {
+    result = {
+      promotion_id: 'promotion_id must be filled'
+    };
+  } else if (!validator.isNumeric(data.promotion_id)) {
+    result = {
+      promotion_id: 'Invalid input, promotion_id must be a number!'
+    };
+  }
+  // if (!data.promotion_id) {
+  //   result = {
+  //     promotion_id: 'Invalid input, promotion_id must be a number!'
+  //   };
+  // }
+
+  if (validator.isEmpty(data.delivery_method_id)) {
+    result = {
+      ...result,
+      delivery_method_id: 'delivery_method_id must be filled'
+    };
+  } else if (!validator.isNumeric(data.delivery_method_id)) {
+    result = {
+      ...result,
+      delivery_method_id: 'Invalid input, delivery_method_id must be a number!'
+    };
+  }
+
+  return result;
+};
+
+exports.validationDataSize = async (data) => {
+  let result = null;
+  if (data.name === null || data.name === '') {
+    result = {
+      name: 'Name must be filled'
+    };
+  }
+  if (!data.extra_price) {
+    result = {
+      name: 'Invalid input'
+    };
+  }
+
+  return result;
+};
+
+exports.validationDataDeliveryMethod = async (data) => {
+  let result = null;
+  if (data.name === null || data.name === '') {
+    result = {
+      name: 'Name must be filled'
+    };
+  }
+  if (!data.cost) {
+    result = {
+      cost: 'Invalid input'
+    };
+  }
+  return result;
+};
+
 exports.validationDataPromotionSizes = async (data) => {
   let result = null;
-  if (data.promotion_id === null || data.promotion_id === undefined) {
+  if (data.promotion_id == null || data.promotion_id === undefined) {
     result = {
       promotion_id: 'promotion_id must be filled'
     };
@@ -115,7 +209,7 @@ exports.validationDataPromotionSizes = async (data) => {
     };
   }
 
-  if (data.size_id === null || data.size_id === undefined) {
+  if (data.size_id == null || data.size_id === undefined) {
     result = {
       size_id: 'size_id must be filled'
     };
@@ -567,6 +661,60 @@ exports.validationUser = async (data) => {
       ...result,
       birthdate: 'Birthdate must be filled.'
     };
+  }
+  return result;
+};
+
+exports.validationDataPromotion = (data) => {
+  let result = null;
+  const { name, code, description, normal_price, discount_value, available_start_at, available_end_at } = data;
+  if (validator.isEmpty(name)) {
+    result = {
+      name: 'Name must be filled.'
+    };
+  }
+  if (validator.isEmpty(code)) {
+    result = {
+      ...result,
+      code: 'Code must be filled!'
+    };
+  }
+  if (validator.isEmpty(description)) {
+    result = {
+      ...result,
+      description: 'Description must be filled!'
+    };
+  }
+  if (validator.isEmpty(normal_price)) {
+    result = {
+      ...result,
+      normal_price: 'Normal price must be filled!'
+    };
+  } else if (!validator.isNumeric(normal_price)) {
+    result = {
+      ...result,
+      normal_price: 'Normal price must be a number!'
+    };
+  }
+  if (validator.isEmpty(discount_value)) {
+    result = {
+      ...result,
+      discount: 'Discount value must be filled!'
+    };
+  } else if (!validator.isNumeric(data.discount_value)) {
+    result = { ...result, discount_value: 'Discount value must be a number!' };
+  }
+
+  if (validator.isEmpty(available_start_at)) {
+    result = { ...result, available_start_at: 'Available start at must be filled!' };
+  } else if (!validator.isDate(available_start_at)) {
+    result = { ...result, available_start_at: 'Available start at must be a date!' };
+  }
+
+  if (validator.isEmpty(available_end_at)) {
+    result = { ...result, available_end_at: 'Available end at must be filled!' };
+  } else if (!validator.isDate(available_end_at)) {
+    result = { ...result, available_end_at: 'Available end at must be a date!' };
   }
   return result;
 };
